@@ -1,9 +1,9 @@
-package edgar
+package sec
 
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/Sutheres/report-chaser/internal/edgar/models"
+	"github.com/Sutheres/report-chaser/internal/sec/models"
 	"github.com/pkg/errors"
 	"io"
 	"net/http"
