@@ -1,0 +1,49 @@
+orbs:
+  go: circleci/go@1.5.0
+version: 2.1
+jobs:
+  golangci-lint:
+    docker:
+      - image: circleci/golang:1.13
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "go.sum" }}
+            - v1-dependencies-
+      - run:
+          name: Download Dependencies
+          command: go mod vendor
+      - save_cache:
+          paths:
+            - "/go/pkg"
+          key: v1-dependencies-{{ checksum "go.sum" }}
+      - run:
+          name: "GolangCi lint"
+          command: |
+            curl -sfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh| sh -s -- -b $(go env GOPATH)/bin v1.34.1
+            make lint
+  unit-tests:
+    docker:
+      - image: circleci/golang:1.13
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "go.sum" }}
+            - v1-dependencies-
+      - run:
+          name: Download Dependencies
+          command: go mod vendor
+      - save_cache:
+          paths:
+            - "/go/pkg"
+          key: v1-dependencies-{{ checksum "go.sum" }}
+      - run:
+          name: Run Tests
+          command: go test -v ./...
+workflows:
+  test_build_push:
+    jobs:
+      - unit-tests
+      - golangci-lint
