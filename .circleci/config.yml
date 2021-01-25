@@ -1,26 +1,49 @@
-# Golang CircleCI 2.0 configuration file
-#
-# Check https://circleci.com/docs/2.0/language-go/ for more details
-version: 2
+orbs:
+  go: circleci/go@1.5.0
+version: 2.1
 jobs:
-  build:
+  golangci-lint:
     docker:
-      # specify the version
-      - image: circleci/golang:1.9
-
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
-      # - image: circleci/postgres:9.4
-
-    #### TEMPLATE_NOTE: go expects specific checkout path representing url
-    #### expecting it in the form of
-    ####   /go/src/github.com/circleci/go-tool
-    ####   /go/src/bitbucket.org/circleci/go-tool
-    working_directory: /go/src/github.com/{{ORG_NAME}}/{{REPO_NAME}}
+      - image: circleci/golang:1.13
     steps:
       - checkout
-
-      # specify any bash command here prefixed with `run: `
-      - run: go get -v -t -d ./...
-      - run: go test -v ./...
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "go.sum" }}
+            - v1-dependencies-
+      - run:
+          name: Download Dependencies
+          command: go mod vendor
+      - save_cache:
+          paths:
+            - "/go/pkg"
+          key: v1-dependencies-{{ checksum "go.sum" }}
+      - run:
+          name: "GolangCi lint"
+          command: |
+            curl -sfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh| sh -s -- -b $(go env GOPATH)/bin v1.34.1
+            make lint
+  unit-tests:
+    docker:
+      - image: circleci/golang:1.13
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "go.sum" }}
+            - v1-dependencies-
+      - run:
+          name: Download Dependencies
+          command: go mod vendor
+      - save_cache:
+          paths:
+            - "/go/pkg"
+          key: v1-dependencies-{{ checksum "go.sum" }}
+      - run:
+          name: Run Tests
+          command: go test -v ./...
+workflows:
+  test_build_push:
+    jobs:
+      - unit-tests
+      - golangci-lint
