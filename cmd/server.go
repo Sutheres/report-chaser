@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"github.com/Sutheres/report-chaser/internal/sec"
+	"github.com/Sutheres/report-chaser/service"
 	"github.com/spf13/cobra"
 	"log"
 )
@@ -16,6 +18,15 @@ var workerCmd = &cobra.Command{
 }
 
 func startServer(cmd *cobra.Command, args []string) {
+
+	s := sec.NewClient(
+		"https://sec.gov",
+	)
+
+	_ = service.NewService(
+		"", "",
+		service.WithSEC(s),
+	)
 
 	defer func() {
 		log.Println("shutting down...")

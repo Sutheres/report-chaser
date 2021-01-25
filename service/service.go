@@ -1,6 +1,8 @@
 package service
 
-import "github.com/Sutheres/report-chaser/internal/sec"
+import (
+	"github.com/Sutheres/report-chaser/internal/sec"
+)
 
 type Service interface {
 }
