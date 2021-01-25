@@ -1,19 +1,11 @@
-package sec
+package edgar
 
 import (
-	"github.com/Sutheres/report-chaser/internal/sec/models"
 	"net/http"
 )
 
-type EdgarIndex string
+type Edgar interface {
 
-var (
-	JSONExtension EdgarIndex = "index.json"
-)
-
-type SEC interface {
-	GetDailyReports() ([]models.Item, error)
-	GetFileExtension(file string) string
 }
 
 type client struct {
@@ -21,13 +13,9 @@ type client struct {
 	c    http.Client
 }
 
-func NewClient(host string) SEC {
+func NewClient(host string) Edgar {
 	return &client{
 		host: host,
 		c:    http.Client{},
 	}
-}
-
-func (c *client) GetFileExtension(file string) string {
-	return file[len(file)-3:]
 }
