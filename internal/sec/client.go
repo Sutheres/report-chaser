@@ -1,10 +1,12 @@
-package edgar
+//go:generate mockgen -package=mocks -destination=../../mocks/sec.go github.com/Sutheres/report-chaser/internal/sec SEC
+
+package sec
 
 import (
 	"net/http"
 )
 
-type Edgar interface {
+type SEC interface {
 
 }
 
@@ -13,7 +15,7 @@ type client struct {
 	c    http.Client
 }
 
-func NewClient(host string) Edgar {
+func NewClient(host string) SEC {
 	return &client{
 		host: host,
 		c:    http.Client{},
