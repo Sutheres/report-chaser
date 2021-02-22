@@ -7,7 +7,7 @@ import (
 )
 
 type SEC interface {
-
+	GetTickerValues() ([]Ticker, error)
 }
 
 type client struct {
