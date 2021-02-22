@@ -5,7 +5,9 @@
 package mocks
 
 import (
+	sec "github.com/Sutheres/report-chaser/internal/sec"
 	gomock "github.com/golang/mock/gomock"
+	reflect "reflect"
 )
 
 // MockSEC is a mock of SEC interface
@@ -29,4 +31,17 @@ func NewMockSEC(ctrl *gomock.Controller) *MockSEC {
 // EXPECT returns an object that allows the caller to indicate expected use
 func (m *MockSEC) EXPECT() *MockSECMockRecorder {
 	return m.recorder
+}
+
+// GetTickerValues mocks base method
+func (m *MockSEC) GetTickerValues() ([]sec.Ticker, error) {
+	ret := m.ctrl.Call(m, "GetTickerValues")
+	ret0, _ := ret[0].([]sec.Ticker)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetTickerValues indicates an expected call of GetTickerValues
+func (mr *MockSECMockRecorder) GetTickerValues() *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTickerValues", reflect.TypeOf((*MockSEC)(nil).GetTickerValues))
 }
