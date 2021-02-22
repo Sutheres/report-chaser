@@ -7,17 +7,17 @@ import (
 	"net/http"
 )
 
-func (s *client) GetTickerValues() ([]Ticker, error) {
+func (c *client) GetTickerValues() ([]Ticker, error) {
 	var response map[string]Ticker
 
 	req, err := http.NewRequest(
 		http.MethodGet,
-		fmt.Sprintf("%s/files/company_tickers.json", s.host),
+		fmt.Sprintf("%s/files/company_tickers.json", c.host),
 		nil)
 	if err != nil {
 		return nil, errors.Wrap(err, "NewRequest")
 	}
-	resp, err := s.c.Do(req)
+	resp, err := c.c.Do(req)
 	if err != nil {
 		return nil, errors.Wrap(err, "Do")
 	}
